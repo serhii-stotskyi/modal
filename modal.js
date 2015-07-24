@@ -31,7 +31,11 @@ var modalWindow = {
         _win.style.display = 'inline'; //Зададим CSS-свойство
 
         _win.innerHTML = html; //Добавим нужный HTML-текст в наше диалоговое окно
-        
+
+        //Установим позицию по центру экрана
+
+        _win.style.left = '50%'; //Позиция по горизонтали
+        _win.style.top = '50%'; //Позиция по вертикали
 
         //Выравнивание по центру путем задания отрицательных отступов
         _win.style.marginTop = -(_win.offsetHeight / 2) + 'px';
