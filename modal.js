@@ -50,5 +50,10 @@ var modalWindow = {
     open: function(html) {
         modalWindow.initBlock();
         modalWindow.initWin(html);
+        modalWindow.afterOpen();
+    },
+
+    afterOpen: function() {
+        setTimeout('alert("1 second")', 1000)
     }
 }
