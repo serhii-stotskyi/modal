@@ -45,6 +45,7 @@ var modalWindow = {
     close: function() {
         document.getElementById('blockscreen').style.display = 'none';
         document.getElementById('modalwindow').style.display = 'none';
+        modalWindow.afterClose();
     },
 
     open: function(html) {
@@ -54,6 +55,10 @@ var modalWindow = {
     },
 
     afterOpen: function() {
-        setTimeout('alert("1 second")', 1000)
+        setTimeout('alert("2 second afterOpen")', 2000)
+    },
+
+    afterClose: function() {
+        setTimeout('alert("1 second afterClose")', 1000)
     }
 }
