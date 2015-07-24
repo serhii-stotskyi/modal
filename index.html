@@ -17,9 +17,9 @@
     <div style="font-weight: bold; text-align: center;">Модальное окно</div>
     <input type="text" placeholder="Почта" autofocus><br>
     <input type="password" placeholder="Пароль"><br>
-    <input type="button" value="Войти"> <input type="button" value="Закрыть" >
+    <input type="button" value="Закрыть" onclick="modalWindow.close();" >
 </div>
-<input type="button" value="Открыть модальное окно" >
+<input type="button" value="Открыть модальное окно" onclick="modalWindow.open(document.getElementById('anyblock').innerHTML);">
 
 </body>
 </html>

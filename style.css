@@ -1,0 +1,40 @@
+#blockscreen, #modalwindow {
+    position: fixed;
+}
+#blockscreen {
+    background: rgba(0, 0, 0, .7);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+#modalwindow {
+    z-index: 11;
+    background: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;
+    box-shadow: 0 0 10px #444;
+
+}
+
+body {
+    background: #ffffff;
+    margin: 50px;
+    text-align: center;
+    font-size: 14px;
+}
+input[type="button"] {
+    padding: 5px 10px;
+    background: #f4f4f4;
+    border: 1px solid #b6b6b6;
+    border-radius: 5px;
+    box-shadow: 2px 0 5px #444;
+}
+input[type="button"]:hover {
+    background: #fff;
+}
+h1 {
+    color: #1E586F;
+}
