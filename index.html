@@ -1,25 +1,115 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script type="text/javascript" src="modal.js"></script>
-    <title>Плагин с модальными окнами</title>
-    <link rel="stylesheet" href="style.css">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <title>jsModal - Modal generator in pure JavaScript.</title>
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+    <style>
+        html {
+            font-family: arial, sans-serif;
+            color: #444;
+        }
+
+        body {
+            background: #eee;
+        }
+
+        #header {
+            background: #fafafa;
+            border-bottom: 1px solid #f2f2f2;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #jsmodal-logo {
+            float: right;
+            margin: 10px;
+        }
+
+        #wrapper {
+            background: #fff;
+            -moz-border-radius: 11px;
+            -webkit-border-radius: 11px;
+            border-radius: 11px;
+            margin: 0 auto;
+            width: 800px;
+        }
+
+        #wrapper > div {
+            display: block;
+            margin: 10px;
+        }
+
+        h1, h4 {
+            font-family: "open sans", arial, sans-serif;
+        }
+
+        a {
+            color: #36c;
+        }
+
+        pre {
+            border: 1px solid #777;
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
 </head>
 
-<body>
-
-<h1>Пример модальных окон</h1>
-
-
-<div class="fuck"></div>
-<div id="anyblock" style="display: none;">
-    <div style="font-weight: bold; text-align: center;">Модальное окно</div>
-    <input type="text" placeholder="Почта" autofocus><br>
-    <input type="password" placeholder="Пароль"><br>
-    <input type="button" value="Закрыть" onclick="modalWindow.close();" >
+<br>
+<div id="content">
+    <input id="modal-1" type="button" value="Content"/>
 </div>
-<input type="button" value="Открыть модальное окно" onclick="modalWindow.open(document.getElementById('anyblock').innerHTML);">
+</br>
+<div id="ajax-content">
+    <input id="modal-2" type="button" value="Ajax-content"/>
+</div>
+
+<script src="js/modal.js"></script>
+<script>
+    window.onload = function () {
+        Modal.load({
+            onLoad: function () {
+                Modal.test({
+                    content: '<strong>Default modal!</strong><br />Testing the modal.<br /><br />Loreum ipsum dolorem the quick brown fox jumped over the lazy dog.<br /><br />Yes its true.',
+                    draggable: true,
+                    openCallback: function () {
+                        alert('This is an example of the use of openCallback');
+                    },
+                    closeCallback: function () {
+                        alert('This is an example of the use of closeCallback');
+                    },
+                    openAfter: 2000
+                });
+    }
+    })
+    };
+    document.getElementById('modal-1').onclick = function () {
+        Modal.test({
+            content: '<strong>Default modal!</strong><br />Testing the modal.<br /><br />Loreum ipsum dolorem the quick brown fox jumped over the lazy dog.<br /><br />Yes its true.',
+            draggable: true,
+            openCallback: function () {
+                alert('This is an example of the use of openCallback');
+            },
+            closeCallback: function () {
+                alert('This is an example of the use of closeCallback');
+            },
+            openAfter: 2000
+        });
+    };
+    document.getElementById('modal-2').onclick = function () {
+        Modal.test({
+            ajaxContent: 'ajax-example.html',
+            draggable: true,
+            openAfter: 2000
+        });
+    };
+</script>
 
 </body>
+
 </html>
