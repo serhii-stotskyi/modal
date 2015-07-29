@@ -126,7 +126,7 @@ var Modal = (function () {
         if (settings.closeAfter > 0) {
             closeModalEvent = window.setTimeout(function () {
                 method.close();
-            }, settings.closeAfter * 1000);
+            }, settings.closeAfter);
         }
         if (settings.openCallback) {
             settings.openCallback();
@@ -168,6 +168,7 @@ var Modal = (function () {
         XMLHttpRequestObject.onreadystatechange = function () {
             if (XMLHttpRequestObject.readyState === 4) {
                 if (XMLHttpRequestObject.status === 200) {
+                    successCallback(XMLHttpRequestObject.responseText);
                     modalContainer.removeAttribute('class');
                 } else {
                     successCallback(XMLHttpRequestObject.responseText);
@@ -175,8 +176,9 @@ var Modal = (function () {
                 }
             }
         };
-
+        
         XMLHttpRequestObject.send(null);
+
     };
 
     // Close the modal
@@ -266,10 +268,8 @@ var Modal = (function () {
         window.addEventListener('load', function () {
             document.body.appendChild(modalOverlay);
             document.body.appendChild(modalContainer);
-            alert("contentLoaded");
         }, false);
     }
-
 
     return method;
 }());
