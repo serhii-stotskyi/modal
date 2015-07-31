@@ -32,7 +32,6 @@
 }
 
 #modal-close {
-  background: #fff url('../images/jsmodal/modal-close.png') no-repeat center center;
   cursor: pointer;
   display: block;
   filter: alpha(opacity=60);
@@ -59,5 +58,4 @@
 }
 
 #modal-container.modal-loading {
-  background: #fff url('../images/jsmodal/loading.gif') no-repeat center center;
 }

@@ -1,286 +1,239 @@
-var Modal = (function () {
-            "use strict";
+var Modal = function (parameters) {
+    var defaultSettings = {
+        width: 'auto',
+        height: 'auto',
+        lock: false,
+        hideClose: false,
+        openCallback: false,
+        closeCallback: false,
+        hideOverlay: true,
+        content: '',
+        ajaxContent: '',
+        contentLoaded: null,
+        modalOverlay :document.createElement('div'),
+        modalContainer :document.createElement('div'),
+        modalHeader :document.createElement('div'),
+        modalContent : document.createElement('div'),
+        modalClose : document.createElement('div')
+    };
 
-            // create object method
-            var method = {},
-                settings = {},
+    this.properties = parameters;
+    for (var n in defaultSettings) {
+        if (!this.properties[n]) {
+            this.properties[n] = defaultSettings[n];
+        }
+    }
 
-                modalOverlay = document.createElement('div'),
-                modalContainer = document.createElement('div'),
-                modalHeader = document.createElement('div'),
-                modalContent = document.createElement('div'),
-                modalClose = document.createElement('div'),
+    this.properties.modalOverlay.setAttribute('id', 'modal-overlay');
+    this.properties.modalContainer.setAttribute('id', 'modal-container');
+    this.properties.modalHeader.setAttribute('id', 'modal-header');
+    this.properties.modalContent.setAttribute('id', 'modal-content');
+    this.properties.modalClose.setAttribute('id', 'modal-close');
+    this.properties.modalHeader.appendChild(this.properties.modalClose);
+    this.properties.modalContainer.appendChild(this.properties.modalHeader);
+    this.properties.modalContainer.appendChild(this.properties.modalContent);
 
-                centerModal,
+    this.properties.modalOverlay.style.visibility = 'hidden';
+    this.properties.modalContainer.style.visibility = 'hidden';
+    if (window.addEventListener) {
+        window.addEventListener('load', function () {
+            document.body.appendChild(parameters.modalOverlay);
+            document.body.appendChild(parameters.modalContainer);
+        }, false);
+    }
 
-                closeModalEvent,
+};
 
-                defaultSettings = {
-                    width: 'auto',
-                    height: 'auto',
-                    lock: false,
-                    hideClose: false,
-                    openAfter: 0,
-                    closeAfter: 0,
-                    openCallback: false,
-                    closeCallback: false,
-                    hideOverlay: false,
-                    onLoad: false
-                };
-
-            method.load = function (parameters) {
-                settings.onLoad = parameters.onLoad || defaultSettings.onLoad;
-                if (settings.onLoad) {
-                    settings.onLoad();
-                }
-            };
-
-            method.test = function (parameters) {
-                settings.width = parameters.width || defaultSettings.width;
-                settings.height = parameters.height || defaultSettings.height;
-                settings.lock = parameters.lock || defaultSettings.lock;
-                settings.hideClose = parameters.hideClose || defaultSettings.hideClose;
-                settings.openAfter = parameters.openAfter || defaultSettings.openAfter;
-                settings.closeAfter = parameters.closeAfter || defaultSettings.closeAfter;
-                settings.closeCallback = parameters.closeCallback || defaultSettings.closeCallback;
-                settings.openCallback = parameters.openCallback || defaultSettings.openCallback;
-                settings.hideOverlay = parameters.hideOverlay || defaultSettings.hideOverlay;
-                settings.onLoad = parameters.onLoad || defaultSettings.onLoad;
-
-                if (settings.openAfter) {
-                    //alert(settings.openAfter);
-                    setTimeout(function () {
-                        method.open(parameters);
-                    }, settings.openAfter);
-                } else {
-                    method.open(parameters);
-                }
-
-                if (settings.onLoad) {
-                    settings.onLoad();
-                }
-            };
-
-            // Open the modal
-
-            method.open = function (parameters) {
-                settings.width = parameters.width || defaultSettings.width;
-                settings.height = parameters.height || defaultSettings.height;
-                settings.lock = parameters.lock || defaultSettings.lock;
-                settings.hideClose = parameters.hideClose || defaultSettings.hideClose;
-                settings.openAfter = parameters.openAfter || defaultSettings.openAfter;
-                settings.closeAfter = parameters.closeAfter || defaultSettings.closeAfter;
-                settings.closeCallback = parameters.closeCallback || defaultSettings.closeCallback;
-                settings.openCallback = parameters.openCallback || defaultSettings.openCallback;
-                settings.hideOverlay = parameters.hideOverlay || defaultSettings.hideOverlay;
-                settings.onLoad = parameters.onLoad || defaultSettings.onLoad;
+Modal.prototype.open = function () {
+    var _this = this;
+    var properties = this.properties;
 
 
-                centerModal = function () {
-                    method.center({});
-                };
-
-                if (parameters.content && !parameters.ajaxContent) {                  //проверка содержимого модального окна
-                    modalContent.innerHTML = parameters.content;
-                } else if (parameters.ajaxContent && !parameters.content) {
-                    modalContainer.className = 'modal-loading';
-                    method.ajax(parameters.ajaxContent, function insertAjaxResult(ajaxResult) {
-                        modalContent.innerHTML = ajaxResult;
-                    });
-                } else {
-                    modalContent.innerHTML = '';
-                }
-
-
-                modalContainer.style.width = settings.width;                        //устанавливает ширину и высоту экрана
-                modalContainer.style.height = settings.height;
-
-                method.center({});                                     //устанавливает окно по центру
-
-                if (settings.lock || settings.hideClose) {
-                    modalClose.style.visibility = 'hidden';
-                }
-                if (!settings.hideOverlay) {
-                    modalOverlay.style.visibility = 'visible';
-                }
-                modalContainer.style.visibility = 'visible';
-
-                document.onkeypress = function (e) {
-                    if (e.keyCode === 27 && settings.lock !== true) {
-                        method.close();
-                    }
-                };
-
-                modalOverlay.onclick = function () {
-                    if (!settings.lock) {
-                        method.close();
-                    } else {
-                        return false;
-                    }
-                };
-
-                if (window.addEventListener) {
-                    window.addEventListener('resize', centerModal, false);
-                } else if (window.attachEvent) {
-                    window.attachEvent('onresize', centerModal);
-                }
-
-                if (settings.closeAfter > 0) {
-                    closeModalEvent = window.setTimeout(function () {
-                        method.close();
-                    }, settings.closeAfter);
-                }
-                if (settings.openCallback) {
-                    settings.openCallback();
-                }
-            };
-
-            // Perform XMLHTTPRequest
-            method.ajax = function (url, successCallback) {
-                var i,
-                    XMLHttpRequestObject = false,
-                    XMLHttpRequestObjects = [
-                        function () {
-                            return new window.XMLHttpRequest();  // IE7+, Firefox, Chrome, Opera, Safari
-                        },
-                        function () {
-                            return new window.ActiveXObject('Msxml2.XMLHTTP.6.0');
-                        },
-                        function () {
-                            return new window.ActiveXObject('Msxml2.XMLHTTP.3.0');
-                        },
-                        function () {
-                            return new window.ActiveXObject('Msxml2.XMLHTTP');
-                        }
-                    ];
-
-                for (i = 0; i < XMLHttpRequestObjects.length; i += 1) {
-                    try {
-                        XMLHttpRequestObject = XMLHttpRequestObjects[i]();
-                    } catch (ignore) {
-                    }
-
-                    if (XMLHttpRequestObject !== false) {
-                        break;
-                    }
-                }
-
-
-
-                XMLHttpRequestObject.open('GET', url, true);
-
-                XMLHttpRequestObject.onreadystatechange = function () {
-                    if (XMLHttpRequestObject.readyState === 4) {
-                        if (XMLHttpRequestObject.status === 200) {
-                            successCallback(XMLHttpRequestObject.responseText);
-                            modalContainer.removeAttribute('class');
-                        } else {
-                            alert("Error with ajax was found");
-                        }
-                    }
-                };
-
-
-                XMLHttpRequestObject.send(null);
-                if ((window.addEventListener) && (XMLHttpRequestObject.readyState === 4)) {
-                    window.addEventListener('load', function () {
-                        alert('123');
-                    }, false);
-                }
-            };
-
-            // Close the modal
-            method.close = function () {
-                modalContent.innerHTML = '';
-                modalOverlay.setAttribute('style', '');
-                modalOverlay.style.cssText = '';
-                modalOverlay.style.visibility = 'hidden';
-                modalContainer.setAttribute('style', '');
-                modalContainer.style.cssText = '';
-                modalContainer.style.visibility = 'hidden';
-                modalHeader.style.cursor = 'default';
-                modalClose.setAttribute('style', '');
-                modalClose.style.cssText = '';
-
-                if (closeModalEvent) {
-                    window.clearTimeout(closeModalEvent);
-                }
-
-                if (settings.closeCallback) {
-                    settings.closeCallback();
-                }
-
-                if (window.removeEventListener) {
-                    window.removeEventListener('resize', centerModal, false);
-                } else if (window.detachEvent) {
-                    window.detachEvent('onresize', centerModal);
-                }
-            };
-
-            // Center the modal in the viewport
-            method.center = function (parameters) {
-                var documentHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
-
-                    modalWidth = Math.max(modalContainer.clientWidth, modalContainer.offsetWidth),
-                    modalHeight = Math.max(modalContainer.clientHeight, modalContainer.offsetHeight),
-
-                    browserWidth = 0,
-                    browserHeight = 0,
-
-                    amountScrolledX = 0,
-                    amountScrolledY = 0;
-
-                if (typeof (window.innerWidth) === 'number') {
-                    browserWidth = window.innerWidth;
-                    browserHeight = window.innerHeight;
-                } else if (document.documentElement && document.documentElement.clientWidth) {
-                    browserWidth = document.documentElement.clientWidth;
-                    browserHeight = document.documentElement.clientHeight;
-                }
-
-                if (typeof (window.pageYOffset) === 'number') {
-                    amountScrolledY = window.pageYOffset;
-                    amountScrolledX = window.pageXOffset;
-                } else if (document.body && document.body.scrollLeft) {
-                    amountScrolledY = document.body.scrollTop;
-                    amountScrolledX = document.body.scrollLeft;
-                } else if (document.documentElement && document.documentElement.scrollLeft) {
-                    amountScrolledY = document.documentElement.scrollTop;
-                    amountScrolledX = document.documentElement.scrollLeft;
-                }
-
-                if (!parameters.horizontalOnly) {
-                    modalContainer.style.top = amountScrolledY + (browserHeight / 2) - (modalHeight / 2) + 'px';
-                }
-
-                modalContainer.style.left = amountScrolledX + (browserWidth / 2) - (modalWidth / 2) + 'px';
-
-                modalOverlay.style.height = documentHeight + 'px';
-                modalOverlay.style.width = '100%';
-            };
-
-
-            // Set the id's, append the nested elements, and append the complete modal to the document body
-            modalOverlay.setAttribute('id', 'modal-overlay');
-            modalContainer.setAttribute('id', 'modal-container');
-            modalHeader.setAttribute('id', 'modal-header');
-            modalContent.setAttribute('id', 'modal-content');
-            modalClose.setAttribute('id', 'modal-close');
-            modalHeader.appendChild(modalClose);
-            modalContainer.appendChild(modalHeader);
-            modalContainer.appendChild(modalContent);
-
-            modalOverlay.style.visibility = 'hidden';
-            modalContainer.style.visibility = 'hidden';
-            if (window.addEventListener) {
-                window.addEventListener('load', function () {
-                    document.body.appendChild(modalOverlay);
-                    document.body.appendChild(modalContainer);
-                }, false);
+    if (this.properties && !this.properties.ajaxContent) {
+        properties.modalContent.innerHTML = this.properties.content;
+    } else if (this.properties.ajaxContent && !this.properties.content) {
+        properties.modalContainer.className = 'modal-loading';
+        this.ajax(this.properties.ajaxContent, function insertAjaxResult(ajaxResult) {
+            properties.modalContent.innerHTML = ajaxResult;
+            if ((properties.contentLoaded) && (typeof properties.contentLoaded == 'function')) {
+                properties.contentLoaded();
             }
+        });
+    } else {
+        properties.modalContent.innerHTML = '';
+    }
 
-            return method;
-        }()
-    )
-    ;
 
+    properties.modalContainer.style.width = this.properties.width;
+    properties.modalContainer.style.height = this.properties.height;
+
+
+    this.centering();
+
+
+    if (this.properties.lock || this.properties.hideClose) {
+        properties.modalClose.style.visibility = 'hidden';
+    }
+
+    function open(){
+        if (properties.hideOverlay) {
+            properties.modalOverlay.style.visibility = 'visible';
+        }
+
+        properties.modalContainer.style.visibility = 'visible';
+
+        if ((properties.openCallback) && (typeof properties.openCallback == 'function')) {
+            properties.openCallback();
+        }
+    }
+
+    document.addEventListener("keydown", function(e){
+        console.log(e);
+        if (e.keyCode === 27 && properties.lock !== true) {
+            _this.close();
+        }
+    });
+
+
+    properties.modalOverlay.onclick = function () {
+        if (!properties.lock) {
+            _this.close();
+        } else {
+            return false;
+        }
+    };
+
+    if (window.addEventListener) {
+        window.addEventListener('resize', function(){
+            _this.centering();
+        }, false);
+    } else if (window.attachEvent) {
+        window.attachEvent('onresize', function(){
+            _this.centering();
+        });
+    }
+
+    if(this.properties.openTimeout){
+        setTimeout(function(){
+            open();
+        }, this.properties.openTimeout);
+    }else{
+        open();
+    }
+
+};
+
+
+Modal.prototype.centering = function (){
+    var props = this.properties;
+    var documentHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
+
+        modalWidth = Math.max(props.modalContainer.clientWidth, props.modalContainer.offsetWidth),
+        modalHeight = Math.max(props.modalContainer.clientHeight, props.modalContainer.offsetHeight),
+
+        browserWidth = 0,
+        browserHeight = 0,
+
+        amountScrolledX = 0,
+        amountScrolledY = 0;
+
+    if (typeof (window.innerWidth) === 'number') {
+        browserWidth = window.innerWidth;
+        browserHeight = window.innerHeight;
+    } else if (document.documentElement && document.documentElement.clientWidth) {
+        browserWidth = document.documentElement.clientWidth;
+        browserHeight = document.documentElement.clientHeight;
+    }
+
+    if (typeof (window.pageYOffset) === 'number') {
+        amountScrolledY = window.pageYOffset;
+        amountScrolledX = window.pageXOffset;
+    } else if (document.body && document.body.scrollLeft) {
+        amountScrolledY = document.body.scrollTop;
+        amountScrolledX = document.body.scrollLeft;
+    } else if (document.documentElement && document.documentElement.scrollLeft) {
+        amountScrolledY = document.documentElement.scrollTop;
+        amountScrolledX = document.documentElement.scrollLeft;
+    }
+
+    if (!this.properties.horizontalOnly) {
+        this.properties.modalContainer.style.top = amountScrolledY + (browserHeight / 2) - (modalHeight / 2) + 'px';
+    }
+
+    this.properties.modalContainer.style.left = amountScrolledX + (browserWidth / 2) - (modalWidth / 2) + 'px';
+
+    this.properties.modalOverlay.style.height = documentHeight + 'px';
+    this.properties.modalOverlay.style.width = '100%';
+};
+
+
+Modal.prototype.ajax = function (url, successCallback) {
+    var _this = this;
+    var i,
+        XMLHttpRequestObject = false,
+        XMLHttpRequestObjects = [
+            function () {
+                return new window.XMLHttpRequest();  // IE7+, Firefox, Chrome, Opera, Safari
+            },
+            function () {
+                return new window.ActiveXObject('Msxml2.XMLHTTP.6.0');
+            },
+            function () {
+                return new window.ActiveXObject('Msxml2.XMLHTTP.3.0');
+            },
+            function () {
+                return new window.ActiveXObject('Msxml2.XMLHTTP');
+            }
+        ];
+
+    for (i = 0; i < XMLHttpRequestObjects.length; i += 1) {
+        try {
+            XMLHttpRequestObject = XMLHttpRequestObjects[i]();
+        } catch (ignore) {
+        }
+
+        if (XMLHttpRequestObject !== false) {
+            break;
+        }
+    }
+
+    XMLHttpRequestObject.open('GET', url, true);
+
+    XMLHttpRequestObject.onreadystatechange = function () {
+        if (XMLHttpRequestObject.readyState === 4) {
+            if (XMLHttpRequestObject.status === 200) {
+                successCallback(XMLHttpRequestObject.responseText);
+                _this.properties.modalContainer.removeAttribute('class');
+            } else {
+                alert("Error with ajax was found");
+            }
+        }
+    };
+
+
+    XMLHttpRequestObject.send(null);
+};
+
+Modal.prototype.close = function () {
+    this.properties.modalContent.innerHTML = '';
+    this.properties.modalOverlay.setAttribute('style', '');
+    this.properties.modalOverlay.style.cssText = '';
+    this.properties.modalOverlay.style.visibility = 'hidden';
+    this.properties.modalContainer.setAttribute('style', '');
+    this.properties.modalContainer.style.cssText = '';
+    this.properties.modalContainer.style.visibility = 'hidden';
+    this.properties.modalHeader.style.cursor = 'default';
+    this.properties.modalClose.setAttribute('style', '');
+    this.properties.modalClose.style.cssText = '';
+
+
+    if ((this.properties.closeCallback()) && (typeof this.properties.closeCallback() == 'function')) {
+        this.properties.closeCallback();
+    }
+
+    if (window.removeEventListener) {
+        window.removeEventListener('resize', this.center, false);
+    } else if (window.detachEvent) {
+        window.detachEvent('onresize', this.center);
+    }
+};

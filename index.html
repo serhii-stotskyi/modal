@@ -3,7 +3,7 @@
 
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-    <title>jsModal - Modal generator in pure JavaScript.</title>
+    <title>Modal window</title>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
     <style>
         html {
@@ -13,27 +13,6 @@
 
         body {
             background: #eee;
-        }
-
-        #header {
-            background: #fafafa;
-            border-bottom: 1px solid #f2f2f2;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        #jsmodal-logo {
-            float: right;
-            margin: 10px;
-        }
-
-        #wrapper {
-            background: #fff;
-            -moz-border-radius: 11px;
-            -webkit-border-radius: 11px;
-            border-radius: 11px;
-            margin: 0 auto;
-            width: 800px;
         }
 
         #wrapper > div {
@@ -62,53 +41,32 @@
 
 <br>
 <div id="content">
-    <input id="modal-1" type="button" value="Content"/>
+    <input id="modal-1" type="button" value="Prototype"/>
 </div>
 </br>
-<div id="ajax-content">
-    <input id="modal-2" type="button" value="Ajax-content"/>
-</div>
 
 <script src="js/modal.js"></script>
 <script>
-    window.onload = function () {
-        Modal.load({
-            onLoad: function () {
-                Modal.test({
-                    content: '<strong>Default modal!</strong><br />Testing the modal.<br /><br />Loreum ipsum dolorem the quick brown fox jumped over the lazy dog.<br /><br />Yes its true.',
-                    draggable: true,
-                    openCallback: function () {
-                        alert('This is an example of the use of openCallback');
-                    },
-                    closeCallback: function () {
-                        alert('This is an example of the use of closeCallback');
-                    },
-                    openAfter: 2000
-                });
-    }
-    })
-    };
-    document.getElementById('modal-1').onclick = function () {
-        Modal.test({
+    var modal1;
+    document.addEventListener("DOMContentLoaded", function() {
+        modal1 = new Modal({
             content: '<strong>Default modal!</strong><br />Testing the modal.<br /><br />Loreum ipsum dolorem the quick brown fox jumped over the lazy dog.<br /><br />Yes its true.',
-            draggable: true,
+            contentLoaded: function(){
+                console.log('contentLoaded');
+            },
             openCallback: function () {
                 alert('This is an example of the use of openCallback');
             },
             closeCallback: function () {
                 alert('This is an example of the use of closeCallback');
             },
-            openAfter: 2000
-        });
-    };
-    document.getElementById('modal-2').onclick = function () {
-        Modal.test({
-            ajaxContent: 'ajax-example.html',
-            openCallback: function () {
-                alert('This is an example of the use of openCallback');
-            }
-        });
-    };
+            openTimeout: 2000
+        })
+    });
+
+    document.getElementById('modal-1').onclick = function() {
+        modal1.open();
+    }
 </script>
 
 </body>
