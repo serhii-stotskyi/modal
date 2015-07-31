@@ -4,8 +4,8 @@ var Modal = function (parameters) {
         height: 'auto',
         lock: false,
         hideClose: false,
-        openCallback: false,
-        closeCallback: false,
+        afterOpen: false,
+        afterClose: false,
         hideOverlay: true,
         content: '',
         ajaxContent: '',
@@ -82,8 +82,8 @@ Modal.prototype.open = function () {
 
         properties.modalContainer.style.visibility = 'visible';
 
-        if ((properties.openCallback) && (typeof properties.openCallback == 'function')) {
-            properties.openCallback();
+        if ((properties.afterOpen) && (typeof properties.afterOpen == 'function')) {
+            properties.afterOpen();
         }
     }
 
@@ -227,8 +227,8 @@ Modal.prototype.close = function () {
     this.properties.modalClose.style.cssText = '';
 
 
-    if ((this.properties.closeCallback()) && (typeof this.properties.closeCallback() == 'function')) {
-        this.properties.closeCallback();
+    if ((this.properties.afterClose()) && (typeof this.properties.afterClose() == 'function')) {
+        this.properties.afterClose();
     }
 
     if (window.removeEventListener) {
